@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="Bk2Sp1" name="OSC_Sender" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" displaySplashScreen="1"
+              companyName="Marek Kabacinski" companyWebsite="www.kabacinski.it"
+              companyEmail="contact@kabacinski.it" pluginFormats="buildVST3"
+              pluginName="OSC Sender" pluginVST3Category="Tools">
   <MAINGROUP id="IJJTZ8" name="OSC_Sender">
     <GROUP id="{E706DF44-81FF-C45E-8D61-7E45C6505CD8}" name="Source">
       <FILE id="ADMNH9" name="SliderWithOsc.cpp" compile="1" resource="0"

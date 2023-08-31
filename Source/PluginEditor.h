@@ -18,7 +18,8 @@
 //==============================================================================
 /**
 */
-class OSC_SenderAudioProcessorEditor  : public juce::AudioProcessorEditor, public juce::TextEditor::Listener
+class OSC_SenderAudioProcessorEditor  : public juce::AudioProcessorEditor,
+                                        public juce::TextEditor::Listener
 {
 public:
     OSC_SenderAudioProcessorEditor (OSC_SenderAudioProcessor&);

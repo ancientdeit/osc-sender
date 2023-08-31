@@ -10,10 +10,12 @@
 
 #include <JuceHeader.h>
 
+#include "OscSender.h"
+
 //==============================================================================
 /**
 */
-class OSC_SenderAudioProcessor  : public juce::AudioProcessor
+class OSC_SenderAudioProcessor  : public juce::AudioProcessor, public juce::AudioProcessorValueTreeState::Listener
                             #if JucePlugin_Enable_ARA
                              , public juce::AudioProcessorARAExtension
                             #endif
@@ -56,10 +58,13 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-private:
+    void parameterChanged (const juce::String& parameterID, float newValue) override;
     //==============================================================================
     // Plugin parameters equivalent to m_Sliders
     juce::AudioProcessorValueTreeState parameters;
+
+private:
+    OscSender& oscSender;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OSC_SenderAudioProcessor)

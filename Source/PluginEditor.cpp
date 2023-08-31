@@ -13,13 +13,6 @@
 OSC_SenderAudioProcessorEditor::OSC_SenderAudioProcessorEditor (OSC_SenderAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), oscSender(OscSender::getInstance())
 {
-    // Implementation of m_Sliders
-    for (int i = 0; i < 16; ++i)
-    {
-        m_Sliders.push_back(std::make_unique<SliderWithOsc>("/track/" + juce::String(i + 1) + "/pan", &audioProcessor, i));
-        addAndMakeVisible(m_Sliders.back().get());
-    }
-
     // Implementation of m_PortEditor
     m_PortEditor.setInputFilter(new juce::TextEditor::LengthAndCharacterRestriction(5, "0123456789"), true);
     m_PortEditor.setText("8001");
@@ -31,6 +24,13 @@ OSC_SenderAudioProcessorEditor::OSC_SenderAudioProcessorEditor (OSC_SenderAudioP
     addAndMakeVisible(&m_AddressEditor);
 
     oscSender.setupSender(m_AddressEditor.getText(), m_PortEditor.getText().getIntValue());
+
+    // Implementation of m_Sliders
+    for (int i = 0; i < 16; ++i)
+    {
+        m_Sliders.push_back(std::make_unique<SliderWithOsc>(&audioProcessor, i));
+        addAndMakeVisible(m_Sliders.back().get());
+    }
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.

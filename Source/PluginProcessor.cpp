@@ -21,18 +21,21 @@ OSC_SenderAudioProcessor::OSC_SenderAudioProcessor()
                      #endif
                        )
 #endif
-, parameters(*this, nullptr)
+, parameters(*this, nullptr), oscSender(OscSender::getInstance())
 {
     // Init the m_Parameters here
     for (int i = 0; i < 16; ++i)
     {
         auto param = parameters.createAndAddParameter(std::make_unique<juce::AudioParameterFloat>("track" + juce::String(i + 1), "Track " + juce::String(i + 1), 0.0f, 1.0f, 0.5f));
+        parameters.addParameterListener("track" + juce::String(i + 1), this);
     }
     parameters.state = juce::ValueTree("savedParams");
 }
 
 OSC_SenderAudioProcessor::~OSC_SenderAudioProcessor()
 {
+    for (int i = 0; i < 16; ++i)
+        parameters.removeParameterListener("track" + juce::String(i + 1), this);
 }
 
 //==============================================================================
@@ -188,6 +191,15 @@ void OSC_SenderAudioProcessor::setStateInformation (const void* data, int sizeIn
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+void OSC_SenderAudioProcessor::parameterChanged (const juce::String& parameterID, float newValue)
+{
+    for (int i = 0; i < 16; ++i) {
+        if(parameterID == "track" + juce::String(i + 1)) {
+            oscSender.sendMessageWithValue(newValue, i);
+        }
+    }
 }
 
 //==============================================================================

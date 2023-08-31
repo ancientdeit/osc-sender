@@ -30,9 +30,16 @@ public:
 
     void sendCustomMessageWithValue(const juce::String& address, float value);
 
+    void sendMessageWithValue(float value, int id);
+
+    void setAddress(juce::String address, int id);
+
+    juce::String getAddress(int id);
+
 private:
-    OscSender() {}
+    OscSender();
     ~OscSender() {}
 
+    std::vector<juce::String> addressToSend;
     juce::OSCSender sender;
 };

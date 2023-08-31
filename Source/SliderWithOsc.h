@@ -12,13 +12,20 @@
 
 #include <JuceHeader.h>
 
+#include "PluginProcessor.h"
 #include "OscSender.h"
 
-class SliderWithOsc : public juce::Component, public juce::Slider::Listener, public juce::TextEditor::Listener
+class SliderWithOsc : public juce::Component,
+                      public juce::Slider::Listener,
+                      public juce::TextEditor::Listener
 {
 public:
-    SliderWithOsc();
-    SliderWithOsc(juce::String address, juce::AudioProcessor* juceProcessor, int paramId);
+    SliderWithOsc(OSC_SenderAudioProcessor* juceProcessor, int paramId);
+
+    void setValue(float value);
+    float getValue();
+
+    juce::Slider& getSlider();
 
     void resized() override;
 
@@ -31,9 +38,10 @@ public:
 private:
     juce::Slider slider;
     juce::TextEditor oscAddressEditor;
-    juce::String oscAddress;
 
-    juce::AudioProcessor* processor;
+    OSC_SenderAudioProcessor* processor;
     int id;
     OscSender& oscSender;
+
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachment;
 };

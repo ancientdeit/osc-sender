@@ -10,7 +10,7 @@
 
 #include "SliderWithOsc.h"
 
-SliderWithOsc::SliderWithOsc() : oscSender(OscSender::getInstance())
+SliderWithOsc::SliderWithOsc(OSC_SenderAudioProcessor* juceProcessor, int paramId) : oscSender(OscSender::getInstance()), processor(juceProcessor), id(paramId)
 {
     addAndMakeVisible(slider);
     slider.setSliderStyle(juce::Slider::Rotary);
@@ -18,24 +18,27 @@ SliderWithOsc::SliderWithOsc() : oscSender(OscSender::getInstance())
     slider.addListener(this);
 
     addAndMakeVisible(oscAddressEditor);
-    oscAddressEditor.setText("/default/osc");
+    oscAddressEditor.setText(oscSender.getAddress(id));
     oscAddressEditor.addListener(this);
 
-    oscAddress = oscAddressEditor.getText();
+    oscSender.setAddress(oscAddressEditor.getText(), id);
+
+    sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processor->parameters, "track" + juce::String(id + 1), slider);
 }
 
-SliderWithOsc::SliderWithOsc(juce::String address, juce::AudioProcessor* juceProcessor, int paramId) : oscSender(OscSender::getInstance()), processor(juceProcessor), id(paramId)
+void SliderWithOsc::setValue(float value)
 {
-    addAndMakeVisible(slider);
-    slider.setSliderStyle(juce::Slider::Rotary);
-    slider.setRange(0.0, 1.0, 0.01);
-    slider.addListener(this);
+    slider.setValue(value);
+}
 
-    addAndMakeVisible(oscAddressEditor);
-    oscAddressEditor.setText(address);
-    oscAddressEditor.addListener(this);
+float SliderWithOsc::getValue()
+{
+    return slider.getValue();
+}
 
-    oscAddress = oscAddressEditor.getText();
+juce::Slider& SliderWithOsc::getSlider()
+{
+    return slider;
 }
 
 void SliderWithOsc::resized()
@@ -47,11 +50,10 @@ void SliderWithOsc::resized()
 
 void SliderWithOsc::sliderValueChanged(juce::Slider* slider)
 {
-    oscSender.sendCustomMessageWithValue(oscAddress, slider->getValue());
     processor->setParameterNotifyingHost(id, slider->getValue());
 }
 
 void SliderWithOsc::textEditorTextChanged(juce::TextEditor& editor)
 {
-    oscAddress = editor.getText();
+    oscSender.setAddress(editor.getText(), id);
 }

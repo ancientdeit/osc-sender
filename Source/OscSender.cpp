@@ -10,6 +10,12 @@
 
 #include "OscSender.h"
 
+OscSender::OscSender()
+{
+    for (int i = 0; i < 16; ++i)
+        addressToSend.push_back(juce::String("/track/" + juce::String(i + 1) + "/pan"));
+}
+
 void OscSender::setupSender(const juce::String& ipAddress, int portNumber)
 {
     if (!sender.connect(ipAddress, portNumber))
@@ -30,4 +36,23 @@ void OscSender::sendCustomMessageWithValue(const juce::String& address, float va
     juce::OSCMessage oscMessage(address);
     oscMessage.addFloat32(value);
     sender.send(oscMessage);
+}
+
+void OscSender::sendMessageWithValue(float value, int id)
+{
+    if(addressToSend[id] == "")
+        return;
+    juce::OSCMessage oscMessage(addressToSend[id]);
+    oscMessage.addFloat32(value);
+    sender.send(oscMessage);
+}
+
+void OscSender::setAddress(juce::String address, int id)
+{
+    addressToSend[id] = address;
+}
+
+juce::String OscSender::getAddress(int id)
+{
+    return addressToSend[id];
 }
